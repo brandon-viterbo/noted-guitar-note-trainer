@@ -1,0 +1,20 @@
+{
+  "name": "noted",
+  "version": "1.0.0",
+  "description": "## Motivation If you search for a guitar note trainer on Google, the first result is the one by GuitarOrb.com. It's great, but it lacks some important features! Why can't I use a custom tuning? Why does it only let me identify the note of a given position on the fretboard, instead of letting me also locate a given note?  The other popular guitar note trainers lack these features too, so I made *Noted*!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.0.2",
+    "@eslint/js": "^9.0.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1",
+    "globals": "^15.0.0"
+  }
+}
