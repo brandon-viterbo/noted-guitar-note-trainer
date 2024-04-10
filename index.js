@@ -48,6 +48,7 @@ async function validateTuning(submittedTuningStr, submittedStringsStr) {
 }
 
 async function validateSettings(submittedTuningStr, submittedStringsStr) {
+  // Test check remote repo.
   const valid = await validateTuning(submittedTuningStr, submittedStringsStr);
 
   if (valid) {
