@@ -34,14 +34,14 @@ async function validateTuning(submittedTuningStr, submittedStringsStr) {
   // strings on the user's guitar
   // const tuningRegex = new RegExp('^([A-G](b|#)?)\{'+submittedStringsStr+'\}$');
   const tuningRegex = new RegExp(`^([A-G](b|#)?){${submittedStringsStr}}$`);
-  const tuningStr = submittedTuningStr.replace(/\s + /g, '');
+  const tuningStr = submittedTuningStr.replace(/\s+/g, '');
 
   const valid = tuningRegex.test(tuningStr);
 
   if (valid) {
     console.log(`${tuningStr} is a valid tuning`);
   } else {
-    console.log(`${tuningStr} is an valid tuning`);
+    console.log(`${tuningStr} is an invalid tuning`);
   }
 
   return valid;
@@ -64,7 +64,7 @@ async function updateGuitar(currTuningElem, currStringsElem, submitTuningStr, su
   const updatedStrings = currStringsElem;
 
   if (await validateSettings(submitTuningStr, submitStringsStr)) {
-    updatedTuning.innerHTML = submitTuningStr;
+    updatedTuning.innerHTML = submitTuningStr.replace(/\s+/g, '');
     updatedStrings.innerHTML = submitStringsStr;
     console.log('Settings updated.');
   } else {
