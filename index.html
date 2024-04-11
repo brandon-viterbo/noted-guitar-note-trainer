@@ -11,8 +11,22 @@
     <div id="myGuitar">
       <p id="guitarInfo"></p>
     </div>
+    <div id="testingArea">
+      <form id="testType">
+        <h3>Test Options</h3>
+        <input type="radio" id="identifyMode" name="testMode" value="identifyMode">
+        <label for="identifyMode">Identify Notes</label>
+        <input type="radio" id="locateMode" name="testMode" value="locateMode">
+        <label for="locateMode">Locate Notes</label><br>
+        <label for="rangeOfStrings">Range Of Strings:</label>
+        <input type="text" id="rangeOfStrings" name="rangeOfStrings" value="1, 6"><br>
+        <label for="rangeOfFrets">Range Of Frets (max is 24):</label>
+        <input type="text" id="rangeOfStrings" name="rangeOfStrings" value="0, 24"><br>
+        <button type="submit" value="startTest">Start Test!</button>
+      </form>
+    </div>
     <form id="settingsForm">
-      <h3>Settings</h3>
+      <h3>Guitar Settings</h3>
       <p>For Custom Tuning, please make note letters in UPPERCASE, sharps with #, and flats with lowercase b's.</p>
       <label for="customTuning">Tuning:</label>
       <input type="text" id="customTuning" name="customTuning" value="EADGBE"><br>
