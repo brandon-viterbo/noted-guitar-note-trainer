@@ -142,3 +142,10 @@ settingsForm.addEventListener('submit', (e) => {
   guitarModel.updateView(viewElementID);
   console.log(guitarModel.fretboard);
 });
+
+const testForm = document.getElementById('testOptions');
+const testPrompt = document.getElementById('testPrompt');
+testForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  testPrompt.innerHTML = 'Test started!';
+});

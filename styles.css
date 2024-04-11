@@ -1,4 +1,10 @@
-body, h3 {
+body {
+  text-align: center;
+  background-color: #4100B4;
+  color: #FBFFBA;
+}
+
+h3 {
   text-align: center;
 }
 
@@ -6,6 +12,7 @@ body, h3 {
   width: 50%;
   text-align: center;
   margin: auto;
+  color: black;
 }
 
 #testOptions, #settingsForm {

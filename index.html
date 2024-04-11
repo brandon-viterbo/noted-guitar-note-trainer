@@ -14,10 +14,9 @@
     </div>
     <div id="testingArea" class="container">
       <div id="test">
-      <p id="testPrompts">Put right text in me on Start Test</p>
+        <p id="testPrompt">Put right text in me on Start Test</p>
         <form id="testInputs">
           <p>Put form elements in me when Start Test</p>
-          <input type="submit" value="Update">
         </form>
       </div>
       <form id="testOptions">
@@ -26,10 +25,15 @@
         <label for="identifyMode">Identify Note (Given Position)</label>
         <input type="radio" id="locateMode" name="testMode" value="locateMode">
         <label for="locateMode">Find a Position (Given Note)</label><br>
+
         <label for="rangeOfStrings">Range Of Strings:</label>
         <input type="text" id="rangeOfStrings" name="rangeOfStrings" value="1, 6"><br>
+
         <label for="rangeOfFrets">Range Of Frets (max is 24):</label>
-        <input type="text" id="rangeOfStrings" name="rangeOfStrings" value="0, 24"><br>
+        <input type="text" id="rangeOfFrets" name="rangeOfFrets" value="0, 24"><br>
+
+        <label for="numberOfQuestions">Number of Questions:</label>
+        <input type="number" id="numberOfQuestions" name="numberOfQuestions" value="20" min="1"><br>
         <button type="submit" value="startTest">Start Test!</button>
       </form>
     </div>
