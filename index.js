@@ -61,13 +61,23 @@ const guitarModel = {
 function changeGuitarModel(guitar, allNotes, newTuning, newStrings) {
   let i;
   let j;
+  let baseNote;
+  let baseNotePosition;
+  let nextNotePosition;
   const fretboard = [];
   const noteRegex = /[A-G](b|#)?/g;
-  const notesOfTuning = newTuning.match(noteRegex).reverse();
+  const notesPresent = noteRegex.test(newTuning);
+  let notesOfTuning;
   const newGuitar = guitar;
 
+  if (notesPresent) {
+    notesOfTuning = newTuning.match(noteRegex).reverse();
+  } else {
+    notesOfTuning = [];
+  }
+
   if (!validateSettings(newTuning, newStrings)) {
-    console.log('Guitar model note changed');
+    console.log('Guitar model NOT changed');
     return;
   }
 
@@ -79,12 +89,14 @@ function changeGuitarModel(guitar, allNotes, newTuning, newStrings) {
   function generateFretboard() {
     for (i = 0; i < newStrings; i += 1) {
       fretboard[i] = [];
+      baseNote = notesOfTuning[i];
+      baseNotePosition = allNotes.indexOf(baseNote);
       for (j = 0; j <= guitar.frets; j += 1) {
-        if (j === 0) {
-          fretboard[i][j] = notesOfTuning[i];
-        } else {
-          fretboard[i][j] = allNotes[j - 1];
+        nextNotePosition = Math.floor((baseNotePosition + j * 2) / 2) * 2;
+        if (nextNotePosition >= allNotes.length) {
+          nextNotePosition %= allNotes.length;
         }
+        fretboard[i][j] = [allNotes[nextNotePosition], allNotes[nextNotePosition + 1]];
       }
     }
   }
@@ -117,6 +129,7 @@ window.onload = () => {
   guitarModel.updateView(viewElementID);
 };
 
+// MVC pattern here. settingsForm is the controller...
 const settingsForm = document.getElementById('settingsForm');
 settingsForm.addEventListener('submit', (e) => {
   console.log('Update request submitted...');
@@ -124,6 +137,7 @@ settingsForm.addEventListener('submit', (e) => {
   const submittedTuningStr = document.getElementById('customTuning').value;
   const submittedStringsStr = document.getElementById('submittedStrings').value;
 
+  // which changes the guitar model, which then updates the HTML view element.
   changeGuitarModel(guitarModel, twelveNotes, submittedTuningStr, submittedStringsStr);
   guitarModel.updateView(viewElementID);
   console.log(guitarModel.fretboard);
