@@ -1,38 +1,6 @@
-function generateNoOfStringsOptions() {
-  const currentStrings = document.getElementById('currentStrings');
-  const min = 4;
-  const max = 8;
-  const defaultNo = 6;
-  const select = document.getElementById('submittedStrings');
-  let i;
-
-  for (i = min; i <= max; i += 1) {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.innerHTML = i;
-    if (i === defaultNo) {
-      opt.selected = 'selected';
-      currentStrings.innerHTML = i;
-    }
-    select.appendChild(opt);
-  }
-}
-
-window.onload = () => {
-  generateNoOfStringsOptions();
-};
-
-async function validateTuning(submittedTuningStr, submittedStringsStr) {
-  /* const response = await fetch('./notes.json'),
-    notes = await response.text(),
-    parsedText = await JSON.parse(notes);
-
-  console.log(parsedText['notes'][0]);
-  console.log(parsedText['notes'].includes("A")); */
-
+function validateTuning(submittedTuningStr, submittedStringsStr) {
   // tuningRegex matches a sequence of x valid notes, where x is the number of
   // strings on the user's guitar
-  // const tuningRegex = new RegExp('^([A-G](b|#)?)\{'+submittedStringsStr+'\}$');
   const tuningRegex = new RegExp(`^([A-G](b|#)?){${submittedStringsStr}}$`);
   const tuningStr = submittedTuningStr.replace(/\s+/g, '');
 
@@ -47,9 +15,9 @@ async function validateTuning(submittedTuningStr, submittedStringsStr) {
   return valid;
 }
 
-async function validateSettings(submittedTuningStr, submittedStringsStr) {
+function validateSettings(submittedTuningStr, submittedStringsStr) {
   // Test check remote repo.
-  const valid = await validateTuning(submittedTuningStr, submittedStringsStr);
+  const valid = validateTuning(submittedTuningStr, submittedStringsStr);
 
   if (valid) {
     console.log('All settings are valid.');
@@ -60,27 +28,103 @@ async function validateSettings(submittedTuningStr, submittedStringsStr) {
   return valid;
 }
 
-async function updateGuitar(currTuningElem, currStringsElem, submitTuningStr, submitStringsStr) {
-  const updatedTuning = currTuningElem;
-  const updatedStrings = currStringsElem;
+const twelveNotes = [
+  'A', 'A',
+  'A#', 'Bb',
+  'B', 'Cb',
+  'C', 'B#',
+  'C#', 'Db',
+  'D', 'D',
+  'D#', 'Eb',
+  'E', 'Fb',
+  'F', 'E#',
+  'F#', 'Gb',
+  'G', 'G',
+  'G#', 'Ab',
+];
 
-  if (await validateSettings(submitTuningStr, submitStringsStr)) {
-    updatedTuning.innerHTML = submitTuningStr.replace(/\s+/g, '');
-    updatedStrings.innerHTML = submitStringsStr;
-    console.log('Settings updated.');
-  } else {
-    console.log('ERROR: Cannot update settings.');
+const defaultStringsNo = 6;
+const noOffrets = 24;
+
+const guitarModel = {
+  tuningStr: 'EADGBE',
+  frets: noOffrets,
+  strings: defaultStringsNo,
+  fretboard: null,
+  updateView(viewElementID) {
+    const view = document.getElementById(viewElementID);
+
+    view.innerHTML = `Tuning is ${guitarModel.tuningStr}. Number of strings is ${guitarModel.strings}`;
+  },
+};
+
+function changeGuitarModel(guitar, allNotes, newTuning, newStrings) {
+  let i;
+  let j;
+  const fretboard = [];
+  const noteRegex = /[A-G](b|#)?/g;
+  const notesOfTuning = newTuning.match(noteRegex).reverse();
+  const newGuitar = guitar;
+
+  if (!validateSettings(newTuning, newStrings)) {
+    console.log('Guitar model note changed');
+    return;
+  }
+
+  console.log('Changing guitar model...');
+
+  newGuitar.tuningStr = newTuning;
+  newGuitar.strings = newStrings;
+
+  function generateFretboard() {
+    for (i = 0; i < newStrings; i += 1) {
+      fretboard[i] = [];
+      for (j = 0; j <= guitar.frets; j += 1) {
+        if (j === 0) {
+          fretboard[i][j] = notesOfTuning[i];
+        } else {
+          fretboard[i][j] = allNotes[j - 1];
+        }
+      }
+    }
+  }
+
+  generateFretboard();
+  newGuitar.fretboard = fretboard;
+}
+
+function generateNoOfStringsOptions(defaultNo) {
+  const min = 4;
+  const max = 8;
+  const select = document.getElementById('submittedStrings');
+  let i;
+
+  for (i = min; i <= max; i += 1) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.innerHTML = i;
+    if (i === defaultNo) {
+      opt.selected = 'selected';
+    }
+    select.appendChild(opt);
   }
 }
+
+const viewElementID = 'guitarInfo';
+
+window.onload = () => {
+  generateNoOfStringsOptions(guitarModel.strings);
+  guitarModel.updateView(viewElementID);
+};
 
 const settingsForm = document.getElementById('settingsForm');
 settingsForm.addEventListener('submit', (e) => {
   console.log('Update request submitted...');
   e.preventDefault();
-  const currentTuningElem = document.getElementById('currentTuning');
-  const currentStringsElem = document.getElementById('currentStrings');
   const submittedTuningStr = document.getElementById('customTuning').value;
   const submittedStringsStr = document.getElementById('submittedStrings').value;
 
-  updateGuitar(currentTuningElem, currentStringsElem, submittedTuningStr, submittedStringsStr);
+  changeGuitarModel(guitarModel, twelveNotes, submittedTuningStr, submittedStringsStr);
+  guitarModel.updateView(viewElementID);
+  console.log(guitarModel.fretboard);
 });
