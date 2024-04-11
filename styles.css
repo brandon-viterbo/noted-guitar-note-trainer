@@ -1,0 +1,27 @@
+body, h3 {
+  text-align: center;
+}
+
+.container {
+  width: 50%;
+  text-align: center;
+  margin: auto;
+}
+
+#testOptions, #settingsForm {
+  text-align: left;
+  padding: 2%;
+}
+
+#test {
+  background-color: #E0FFFF;
+  padding: 2%;
+}
+
+#testOptions {
+  background-color: #FFFACD;
+}
+
+#settingsForm {
+  background-color: #E6E6FA;
+}
