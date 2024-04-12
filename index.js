@@ -297,6 +297,7 @@ testInputs.addEventListener('submit', (e) => {
         isAnswerCorrect = correctAnswer[0] === toMatch[0] && correctAnswer[1] === toMatch[1];
       }
     } else {
+      console.log('Answer incorrect, bad format')
       isAnswerCorrect = false;
     }
   }
