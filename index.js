@@ -15,19 +15,6 @@ function validateTuning(submittedTuningStr, submittedStringsStr) {
   return valid;
 }
 
-function validateSettings(submittedTuningStr, submittedStringsStr) {
-  // Test check remote repo.
-  const valid = validateTuning(submittedTuningStr, submittedStringsStr);
-
-  if (valid) {
-    console.log('All settings are valid.');
-  } else {
-    console.log('ERROR: At least one setting is invalid.');
-  }
-
-  return valid;
-}
-
 function changeGuitarModel(guitar, allNotes, newTuning, newStrings) {
   let i;
   let j;
@@ -46,7 +33,7 @@ function changeGuitarModel(guitar, allNotes, newTuning, newStrings) {
     notesOfTuning = [];
   }
 
-  if (!validateSettings(newTuning, newStrings)) {
+  if (!validateTuning(newTuning, newStrings)) {
     console.log('Guitar model NOT changed');
     return;
   }
@@ -149,14 +136,17 @@ function makeQuestionAndAnswer(guitar, minString, maxString, minFret, maxFret, s
   let questionAndAnswer;
 
   function helper() {
-    const string = Math.floor(Math.random() * maxString) + minString;
-    const fret = Math.floor(Math.random() * maxFret) + minFret;
+    const string = Math.floor(Math.random() * (maxString - minString + 1)) + minString;
+    const fret = Math.floor(Math.random() * (maxFret - minFret + 1)) + minFret;
     const note = guitar.fretboard[string - 1][fret];
+    const zeroOrOne = Math.floor(Math.random() * (2));
     // return array in form of [question, answer]
-    if (selectedMode === 'identify') {
+    if (selectedMode === 'identifyMode') {
       return [`String ${string}, fret ${fret} is the note...`, note];
-    } if (selectedMode === 'locate') {
-      return [`The note ${note} is located on...`, [string, fret]];
+    } if (selectedMode === 'locateMode') {
+      // Multiple answers, we handle this outside the function.
+      console.log(`Note selected on string ${string}, fret ${fret}`);
+      return [`The note ${note[zeroOrOne]} is located on 'string, fret'.`, note];
     }
     throw new Error('ERROR: Selected Training Mode is not valid!');
   }
@@ -170,43 +160,156 @@ function makeQuestionAndAnswer(guitar, minString, maxString, minFret, maxFret, s
     }
   }
 
+  console.log(`Must answer for question ${questionAndAnswer[0]}, with ${questionAndAnswer[1]}`);
   return questionAndAnswer;
 }
 
+function validateRange(rangeStr) {
+  const cleanedRange = rangeStr.replace(/\s+/g, '');
+  const rangeRegex = /^\d+,\d+$/;
+  const matches = rangeRegex.test(cleanedRange);
+  let min;
+  let max;
+
+  if (matches) {
+    [min, max] = cleanedRange.split(',');
+  } else {
+    return false;
+  }
+
+  return parseInt(max, 10) >= parseInt(min, 10);
+}
+
+function stringToTwoInts(rangeStr, shouldBeRange) {
+  const cleanedRange = rangeStr.replace(/\s+/g, '');
+  let min = 0;
+  let max = 0;
+
+  if (shouldBeRange) {
+    if (!validateRange(rangeStr)) {
+      return -1;
+    }
+  }
+
+  [min, max] = cleanedRange.split(',');
+
+  return [parseInt(min, 10), parseInt(max, 10)];
+}
+
+const submitAnswerButton = document.createElement('button');
+const answerInput = document.createElement('input');
+
 const testOptions = document.getElementById('testOptions');
 const noOfQuestionsElement = document.getElementById('noOfQuestions');
-const submitAnswerButton = document.createElement('button');
 const testPrompt = document.getElementById('testPrompt');
 const testInputs = document.getElementById('testInputs');
-let questionAndAnswer = makeQuestionAndAnswer(guitarModel, 0, guitarModel.strings, 0, guitarModel.frets, 'identify');
-let question = questionAndAnswer[0];
-let answer = questionAndAnswer[1];
+const rangeOfStrings = document.getElementById('rangeOfStrings');
+const rangeOfFrets = document.getElementById('rangeOfFrets');
+let rangeStringsTxt;
+let rangeFretsTxt;
+let minStr;
+let maxStr;
+let minFr;
+let maxFr;
+let selMode;
+let questionAndAnswer;
+let question;
+let correctAnswer;
+let submittedAnswer;
+let isAnswerCorrect;
 let questionsToAnswer;
-
-console.log(guitarModel.fretboard);
-console.log(`Must answer for question ${question}`);
+let questionsLeft;
+let correct;
 
 submitAnswerButton.type = 'submit';
 submitAnswerButton.innerHTML = 'Submit Answer';
 submitAnswerButton.value = 'submitAnswer';
+answerInput.type = 'text';
+answerInput.placeholder = 'Put your answer here!';
 testOptions.addEventListener('submit', (e) => {
   e.preventDefault();
+  rangeStringsTxt = rangeOfStrings.value;
+  rangeFretsTxt = rangeOfFrets.value;
+
+  if (!validateRange(rangeStringsTxt && rangeFretsTxt)) {
+    console.log('ERROR: One of the ranges is not in a valid form!');
+    return;
+  }
+
+  [minStr, maxStr] = stringToTwoInts(rangeStringsTxt, true);
+  [minFr, maxFr] = stringToTwoInts(rangeFretsTxt, true);
+
+  if (maxStr > guitarModel.strings || maxFr > guitarModel.frets) {
+    console.log('ERROR: String or fret range exceeds that of the guitar!');
+    return;
+  }
+
   testInputs.appendChild(submitAnswerButton);
+  testInputs.appendChild(answerInput);
   questionsToAnswer = noOfQuestionsElement.value;
+  questionsLeft = questionsToAnswer;
+  correct = 0;
+  selMode = document.querySelector('input[name="testMode"]:checked').value;
+  questionAndAnswer = makeQuestionAndAnswer(guitarModel, minStr, maxStr, minFr, maxFr, selMode);
+  console.log('Starting test...');
+  [question, correctAnswer] = questionAndAnswer;
+
   testPrompt.innerHTML = question;
 });
 
 testInputs.addEventListener('submit', (e) => {
-  console.log(`Submitted answer for question ${question}`);
   e.preventDefault();
-  questionsToAnswer -= 1;
-  if (questionsToAnswer === 0) {
-    testPrompt.innerHTML = 'Test done! Your score is: ';
+
+  let cleanedSubmission = '';
+  console.log(`Submitted answer for question ${question}`);
+  console.log(guitarModel.fretboard);
+  questionsLeft -= 1;
+
+  if (questionsLeft === 0) {
+    testPrompt.innerHTML = `Test done! Your score is: ${correct}/${questionsToAnswer}`;
+    answerInput.value = '';
+    testInputs.removeChild(answerInput);
     testInputs.removeChild(submitAnswerButton);
     return;
   }
-  questionAndAnswer = makeQuestionAndAnswer(guitarModel, 0, guitarModel.strings, 0, guitarModel.frets, 'identify');
-  [question, answer] = questionAndAnswer;
+
+  submittedAnswer = answerInput.value;
+  answerInput.value = '';
+
+  if (selMode === 'identifyMode') {
+    isAnswerCorrect = correctAnswer.includes(submittedAnswer.replace(/\s+/g, ''));
+  } else {
+    cleanedSubmission = submittedAnswer.replace(/\s+/g, '');
+    if (/^\d+,\d+$/.test(cleanedSubmission)) {
+      let ansString = '';
+      let ansFret = '';
+      let toMatch = '';
+      [ansString, ansFret] = stringToTwoInts(cleanedSubmission, false);
+
+      const ansStringInRange = (minStr <= ansString && ansString <= maxStr);
+      const ansFretInRange = (minFr <= ansFret && ansFret <= maxFr);
+      if (!(ansStringInRange || ansFretInRange)) {
+        console.log('Answer incorrect, out of range!');
+        isAnswerCorrect = false;
+      } else {
+        toMatch = guitarModel.fretboard[ansString - 1][ansFret];
+        console.log(`${correctAnswer} toMatch is ${toMatch}`);
+        isAnswerCorrect = correctAnswer[0] === toMatch[0] && correctAnswer[1] === toMatch[1];
+      }
+    } else {
+      isAnswerCorrect = false;
+    }
+  }
+
+  if (isAnswerCorrect) {
+    correct += 1;
+    console.log(`Answered correctly with ${submittedAnswer}!`);
+  } else {
+    console.log(`Answered incorrectly with ${submittedAnswer}!`);
+  }
+
+  selMode = document.querySelector('input[name="testMode"]:checked').value;
+  questionAndAnswer = makeQuestionAndAnswer(guitarModel, minStr, maxStr, minFr, maxFr, selMode);
+  [question, correctAnswer] = questionAndAnswer;
   testPrompt.innerHTML = question;
-  console.log(`Must answer for question ${question}`);
 });
