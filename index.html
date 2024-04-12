@@ -14,9 +14,9 @@
     </div>
     <div id="testingArea" class="container">
       <div id="test">
-        <p id="testPrompt">Put right text in me on Start Test</p>
+        <p id="testPrompt"></p>
         <form id="testInputs">
-          <p>Put form elements in me when Start Test</p>
+          
         </form>
       </div>
       <form id="testOptions">
@@ -26,14 +26,15 @@
         <input type="radio" id="locateMode" name="testMode" value="locateMode">
         <label for="locateMode">Find a Position (Given Note)</label><br>
 
+        <p>Write ranges in form of "min, max."</p>
         <label for="rangeOfStrings">Range Of Strings:</label>
         <input type="text" id="rangeOfStrings" name="rangeOfStrings" value="1, 6"><br>
 
         <label for="rangeOfFrets">Range Of Frets (max is 24):</label>
         <input type="text" id="rangeOfFrets" name="rangeOfFrets" value="0, 24"><br>
 
-        <label for="numberOfQuestions">Number of Questions:</label>
-        <input type="number" id="numberOfQuestions" name="numberOfQuestions" value="20" min="1"><br>
+        <label for="noOfQuestions">Number of Questions:</label>
+        <input type="number" id="noOfQuestions" name="noQuestions" value="20" min="1"><br><br>
         <button type="submit" value="startTest">Start Test!</button>
       </form>
     </div>
@@ -44,7 +45,7 @@
         <label for="customTuning">Tuning:</label>
         <input type="text" id="customTuning" name="customTuning" value="EADGBE"><br>
         <p>Select number of strings</p>
-        <select name="submittedStrings" id="submittedStrings"></select><br>
+        <select name="submittedStrings" id="submittedStrings"></select><br><br>
         <input type="submit" value="Update">
       </form>
     </div>
