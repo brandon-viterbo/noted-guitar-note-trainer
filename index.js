@@ -265,14 +265,6 @@ testInputs.addEventListener('submit', (e) => {
   console.log(guitarModel.fretboard);
   questionsLeft -= 1;
 
-  if (questionsLeft === 0) {
-    testPrompt.innerHTML = `Test done! Your score is: ${correct}/${questionsToAnswer}`;
-    answerInput.value = '';
-    testInputs.removeChild(answerInput);
-    testInputs.removeChild(submitAnswerButton);
-    return;
-  }
-
   submittedAnswer = answerInput.value;
   answerInput.value = '';
 
@@ -307,6 +299,14 @@ testInputs.addEventListener('submit', (e) => {
     console.log(`Answered correctly with ${submittedAnswer}!`);
   } else {
     console.log(`Answered incorrectly with ${submittedAnswer}!`);
+  }
+
+  if (questionsLeft === 0) {
+    testPrompt.innerHTML = `Test done! Your score is: ${correct}/${questionsToAnswer}`;
+    answerInput.value = '';
+    testInputs.removeChild(answerInput);
+    testInputs.removeChild(submitAnswerButton);
+    return;
   }
 
   selMode = document.querySelector('input[name="testMode"]:checked').value;
