@@ -15,6 +15,10 @@ h3 {
   color: black;
 }
 
+.badInput {
+  color: red;
+}
+
 #testOptions, #settingsForm {
   text-align: left;
   padding: 2%;
@@ -23,6 +27,12 @@ h3 {
 #test {
   background-color: #E0FFFF;
   padding: 2%;
+}
+
+#testInputs {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #testOptions {
