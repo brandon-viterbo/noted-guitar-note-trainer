@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <title>Noted - Guitar Note Trainer</title>
-    <link rel="stylesheet" href="./styles.css">
-    <script type ="text/javascript" src="./index.js" defer></script>
+    <link rel="stylesheet" href="./src/styles.css">
+    <script src="./src/bundle.js" defer></script>
   </head>
   <body>
     <h1>Noted</h1>
@@ -16,7 +16,8 @@
       <div id="test">
         <p id="testPrompt"></p>
         <form id="testInputs">
-          
+          <input type="text" id="answerInput" name="answerInput" placeholder = 'Put your answer here!'>
+          <button type="submit" value="submitAnswer">Submit Answer</button>
         </form>
       </div>
       <form id="testOptions">
